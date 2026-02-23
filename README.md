@@ -49,7 +49,9 @@ Setup (conda)
 conda env create -f environment.yml
 conda activate graph_flowy
 pip install torch_sparse torch_scatter -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
+pip install -e .
 ```
+Install the project in editable mode (`pip install -e .`) so Python can find the `src` package without path hacks.
 
 Cursor/VS Code: `.vscode/settings.json` configures the `graph_flowy` interpreter and terminal auto-activation. If your conda is elsewhere, update `python.defaultInterpreterPath` to your env's Python path.
 

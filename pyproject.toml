@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hoga"
+version = "0.1.0"
+description = "HOGA: Hop-Wise Graph Attention for circuit learning"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "torch",
+    "torch_geometric",
+    "torch_sparse",
+    "numpy",
+    "pandas",
+    "scipy",
+    "scikit-learn",
+    "networkx",
+    "tqdm",
+    "matplotlib",
+    "seaborn",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
