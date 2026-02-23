@@ -24,7 +24,30 @@ Check at: https://zenodo.org/records/6399454#.YkTglzwpA5k
 
 Note
 ------------
-The implementation of hop-wise feature generation is available [here](https://github.com/cornell-zhang/HOGA/blob/b9dc53bc5df60369a34a8c79ca6015b10946e5f3/utils.py#L23). The model (i.e., hop-wise gated attention) implementation is available [here](https://github.com/cornell-zhang/HOGA/blob/b9dc53bc5df60369a34a8c79ca6015b10946e5f3/model.py#L60). You can adjust them for your own tasks. 
+The implementation of hop-wise feature generation is available in `src/utils/preprocess.py`. The model (i.e., hop-wise gated attention) implementation is available in `src/models/hoga.py`. You can adjust them for your own tasks.
+
+Repository structure
+------------
+```
+├── src/
+│   ├── models/       # HOGA model
+│   ├── data/         # Datasets, dataloaders, evaluator
+│   ├── training/     # Training and evaluation logic
+│   ├── evaluation/   # Metrics
+│   └── utils/        # Preprocessing, logging
+├── scripts/
+│   └── train.py      # Training entry point
+├── configs/
+├── notebooks/
+├── tests/
+└── results/
+```
+
+Minimal training command
+------------
+```bash
+python scripts/train.py --root_dir /path/to/datasets
+``` 
 
 Citation
 ------------
