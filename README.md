@@ -43,6 +43,16 @@ Repository structure
 └── results/
 ```
 
+Setup (conda)
+------------
+```bash
+conda env create -f environment.yml
+conda activate graph_flowy
+pip install torch_sparse torch_scatter -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
+```
+
+Cursor/VS Code: `.vscode/settings.json` configures the `graph_flowy` interpreter and terminal auto-activation. If your conda is elsewhere, update `python.defaultInterpreterPath` to your env's Python path.
+
 Minimal training command
 ------------
 ```bash

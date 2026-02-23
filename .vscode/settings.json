@@ -1,0 +1,4 @@
+{
+  "python.defaultInterpreterPath": "/home/ramaudruz/miniconda3/envs/graph_flowy/bin/python",
+  "python.terminal.activateEnvironment": true
+}

@@ -1,0 +1,22 @@
+---
+description: Use graph_flowy conda environment for all Python execution
+alwaysApply: true
+---
+
+# Conda Environment
+
+This project uses the **graph_flowy** conda environment for all Python execution.
+
+## When Running Python
+
+- **Run Python scripts**: Use `conda run -n graph_flowy python <script>` or ensure the env is active first:
+  ```bash
+  conda activate graph_flowy
+  python scripts/train.py ...
+  ```
+- **Run tests**: `conda run -n graph_flowy pytest ...` or activate first
+- **Install packages**: Always install into graph_flowy: `conda activate graph_flowy` then `pip install ...`
+
+## Workspace Settings
+
+`.vscode/settings.json` configures the Python interpreter and terminal auto-activation for graph_flowy.

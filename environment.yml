@@ -1,0 +1,23 @@
+name: graph_flowy
+channels:
+  - pytorch
+  - nvidia
+  - pyg
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pytorch::pytorch
+  - pytorch::pytorch-cuda=12.4
+  - pyg
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - networkx
+  - tqdm
+  - matplotlib
+  - seaborn
+  - pip
+  # torch_sparse + torch_scatter: install after env creation:
+  #   pip install torch_sparse torch_scatter -f https://data.pyg.org/whl/torch-2.4.0+cu124.html
