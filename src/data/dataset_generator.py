@@ -5,21 +5,22 @@ import sys
 import subprocess
 from subprocess import check_output
 import argparse
-root_folder = os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath("gen_mult_dataset.py"))))
-sys.path.append(root_folder)
-
 import pandas as pd
 import numpy as np
 import random
-
-import networkx as nx
 import json
 import os.path as osp
 import shutil
-from utils import all_numpy
 from datetime import date
-from .dataset_pyg import PygNodePropPredDataset
-from .dataset_pyg import make_master
+
+from src.utils import all_numpy
+from src.data.dataset_pyg import PygNodePropPredDataset
+from src.data.make_master_file import make_master
+
+root_folder = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..")
+)
+
 
 class DatasetSaver(object):
     def __init__(self, dataset_name, root = '', version = 1):

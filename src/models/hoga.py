@@ -3,9 +3,11 @@ import torch.nn.functional as F
 from torch.nn import Linear, BatchNorm1d, LayerNorm, Dropout, Softmax
 
 
-'''
+"""
 Slightly modified multihead attention for Gamora
-'''
+"""
+
+
 class MultiheadAttentionMix(torch.nn.Module):
     def __init__(self, input_dim, num_heads, dropout=0.0):
         super(MultiheadAttentionMix, self).__init__()
@@ -40,7 +42,9 @@ class MultiheadAttentionMix(torch.nn.Module):
 
         # Compute the scaled dot-product attention
         attention_scores = torch.bmm(query, key.transpose(1, 2))
-        attention_scores = attention_scores / torch.sqrt(torch.tensor(self.head_dim, dtype=torch.float32))
+        attention_scores = attention_scores / torch.sqrt(
+            torch.tensor(self.head_dim, dtype=torch.float32)
+        )
 
         # Apply the mask (if provided)
         if mask is not None:
@@ -59,9 +63,12 @@ class MultiheadAttentionMix(torch.nn.Module):
 
         return attention_output, attention_probs
 
-'''
+
+"""
 Vanilla multihead attention (recommended for general use cases)
-'''
+"""
+
+
 class MultiheadAttention(torch.nn.Module):
     def __init__(self, input_dim, num_heads, dropout=0.0):
         super(MultiheadAttention, self).__init__()
@@ -95,14 +102,16 @@ class MultiheadAttention(torch.nn.Module):
         value = value.view(batch_size, seq_len, self.head_dim, -1)
 
         # Compute the scaled dot-product attention
-        attention_scores = torch.einsum('bldh, bndh -> blnh', query, key)
-        attention_scores = attention_scores / torch.sqrt(torch.tensor(self.head_dim, dtype=torch.float32))
+        attention_scores = torch.einsum("bldh, bndh -> blnh", query, key)
+        attention_scores = attention_scores / torch.sqrt(
+            torch.tensor(self.head_dim, dtype=torch.float32)
+        )
 
         attention_probs = self.softmax(attention_scores)
         attention_probs = self.dropout(attention_probs)
 
         # Compute the output of the attention heads
-        attention_output = torch.einsum('blnh, bndh -> bldh', attention_probs, value)
+        attention_output = torch.einsum("blnh, bndh -> bldh", attention_probs, value)
 
         # Reshape and project the output of the attention heads
         attention_output = attention_output.reshape(batch_size, seq_len, self.input_dim)
@@ -110,9 +119,21 @@ class MultiheadAttention(torch.nn.Module):
 
         return attention_output, attention_probs
 
+
 class HOGA(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 dropout, num_hops, heads, attn_dropout=0.0, attn_type="vanilla", use_bias=False):
+    def __init__(
+        self,
+        in_channels,
+        hidden_channels,
+        out_channels,
+        num_layers,
+        dropout,
+        num_hops,
+        heads,
+        attn_dropout=0.0,
+        attn_type="vanilla",
+        use_bias=False,
+    ):
         super(HOGA, self).__init__()
         self.num_layers = num_layers
         self.num_hops = num_hops
@@ -126,17 +147,25 @@ class HOGA(torch.nn.Module):
         self.lins.append(Linear(hidden_channels, hidden_channels, bias=use_bias))
         self.gates.append(Linear(hidden_channels, hidden_channels, bias=use_bias))
         if attn_type == "vanilla":
-            self.trans.append(MultiheadAttention(hidden_channels, heads, dropout=attn_dropout))
+            self.trans.append(
+                MultiheadAttention(hidden_channels, heads, dropout=attn_dropout)
+            )
         else:
-            self.trans.append(MultiheadAttentionMix(hidden_channels, heads, dropout=attn_dropout))
+            self.trans.append(
+                MultiheadAttentionMix(hidden_channels, heads, dropout=attn_dropout)
+            )
         self.lns.append(LayerNorm(hidden_channels))
         for _ in range(num_layers - 1):
             self.lins.append(Linear(hidden_channels, hidden_channels, bias=use_bias))
             self.gates.append(Linear(hidden_channels, hidden_channels, bias=use_bias))
             if attn_type == "vanilla":
-                self.trans.append(MultiheadAttention(hidden_channels, heads, dropout=attn_dropout))
+                self.trans.append(
+                    MultiheadAttention(hidden_channels, heads, dropout=attn_dropout)
+                )
             else:
-                self.trans.append(MultiheadAttentionMix(hidden_channels, heads, dropout=attn_dropout))
+                self.trans.append(
+                    MultiheadAttentionMix(hidden_channels, heads, dropout=attn_dropout)
+                )
             self.lns.append(LayerNorm(hidden_channels))
 
         # Linear layers for predictions
@@ -166,12 +195,12 @@ class HOGA(torch.nn.Module):
         x = self.lins[0](x)
 
         for i, tran in enumerate(self.trans):
-            x = self.lns[i](self.gates[i](x)*(tran(x, x, x)[0]))
+            x = self.lns[i](self.gates[i](x) * (tran(x, x, x)[0]))
             x = F.relu(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
 
-        target = x[:,0,:].unsqueeze(1).repeat(1,self.num_hops-1,1)
-        split_tensor = torch.split(x, [1, self.num_hops-1], dim=1)
+        target = x[:, 0, :].unsqueeze(1).repeat(1, self.num_hops - 1, 1)
+        split_tensor = torch.split(x, [1, self.num_hops - 1], dim=1)
         node_tensor = split_tensor[0]
         neighbor_tensor = split_tensor[1]
         layer_atten = self.attn_layer(torch.cat((target, neighbor_tensor), dim=2))
@@ -183,10 +212,8 @@ class HOGA(torch.nn.Module):
         x = self.bn(F.relu(x))
         x = F.dropout(x, p=self.dropout, training=self.training)
 
-        x1 = self.linear[1](x) # for xor
-        x2 = self.linear[2](x) # for maj
-        x3 = self.linear[3](x) # for roots
+        x1 = self.linear[1](x)  # for xor
+        x2 = self.linear[2](x)  # for maj
+        x3 = self.linear[3](x)  # for roots
 
         return x1, x2, x3, layer_atten
-
-
