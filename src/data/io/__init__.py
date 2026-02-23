@@ -7,7 +7,8 @@ from .read_graph_raw import (
     read_node_label_hetero,
     read_nodesplitidx_split_hetero,
 )
-from .mig_parser import parse_verilog_file
+from .mig_parser import parse_verilog_file, parse_verilog_to_mig
+from .mig_to_pyg import builder_to_pyg
 
 __all__ = [
     "read_graph_pyg",
@@ -19,4 +20,6 @@ __all__ = [
     "read_node_label_hetero",
     "read_nodesplitidx_split_hetero",
     "parse_verilog_file",
+    "parse_verilog_to_mig",
+    "builder_to_pyg",
 ]

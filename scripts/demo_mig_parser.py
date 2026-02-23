@@ -54,9 +54,20 @@ def main():
     # Sample edges
     print("\nSample edges (first 10):")
     for src, tgt in edges[:10]:
-        src_type = nodes.get(src, "?")
-        tgt_type = nodes.get(tgt, "?")
+        src_type = nodes.get(str(src), "?")
+        tgt_type = nodes.get(str(tgt), "?")
         print(f"  {src} ({src_type}) -> {tgt} ({tgt_type})")
+
+    # PyG conversion
+    print("\n" + "=" * 50)
+    print("PyG Conversion")
+    print("=" * 50)
+    from src.data.io.mig_parser import parse_verilog_to_mig
+    from src.data.io.mig_to_pyg import builder_to_pyg
+
+    builder = parse_verilog_to_mig(path)
+    data = builder_to_pyg(builder)
+    print(f"PyG Data: x shape {data.x.shape}, edge_index shape {data.edge_index.shape}, edge_attr shape {data.edge_attr.shape}")
 
     print("\nDone. MIG parser works correctly.")
 
